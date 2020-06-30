@@ -47,7 +47,7 @@ func (receiver *graphsyncReceiver) ReceiveRequest(
 
 	chid, err := receiver.impl.channels.CreateNew(incoming.TransferID(), incoming.BaseCid(), stor, voucher, initiator, dataSender, dataReceiver)
 	if err != nil {
-		log.Error(err)
+		log.Error("CreateNew channel failed", "err", err)
 		receiver.impl.sendResponse(ctx, false, initiator, incoming.TransferID())
 		return
 	}

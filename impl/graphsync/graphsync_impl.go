@@ -93,6 +93,7 @@ func (impl *graphsyncImpl) gsReqRecdHook(p peer.ID, request graphsync.RequestDat
 		hookActions.TerminateWithError(err)
 		return
 	}
+	dtranslog.L.Debug("gsReqRecdHook")
 
 	raw, _ := request.Extension(ExtensionDataTransfer)
 	respData := graphsync.ExtensionData{Name: ExtensionDataTransfer, Data: raw}
@@ -117,6 +118,7 @@ func (impl *graphsyncImpl) gsReqRecdHook(p peer.ID, request graphsync.RequestDat
 // gsCompletedResponseListener is a graphsync.OnCompletedResponseListener. We use it learn when the data transfer is complete
 // for the side that is responding to a graphsync request
 func (impl *graphsyncImpl) gsCompletedResponseListener(p peer.ID, request graphsync.RequestData, status graphsync.ResponseStatusCode) {
+	dtranslog.L.Debug("gsCompletedResponseListener")
 	transferData, err := getExtensionData(request)
 	if err != nil || transferData == nil {
 		return
@@ -255,6 +257,7 @@ func (impl *graphsyncImpl) InProgressChannels() map[datatransfer.ChannelID]datat
 // sendGsRequest assembles a graphsync request and determines if the transfer was completed/successful.
 // notifies subscribers of final request status.
 func (impl *graphsyncImpl) sendGsRequest(ctx context.Context, initiator peer.ID, transferID datatransfer.TransferID, isPull bool, dataSender peer.ID, root cidlink.Link, stor ipld.Node) {
+	dtranslog.L.Debug("sendGsRequest", zap.Bool("isPull", isPull), )
 	extDtData := newTransferData(transferID, initiator, isPull)
 	var buf bytes.Buffer
 	if err := extDtData.MarshalCBOR(&buf); err != nil {
@@ -271,6 +274,7 @@ func (impl *graphsyncImpl) sendGsRequest(ctx context.Context, initiator peer.ID,
 		for err := range errChan {
 			lastError = err
 		}
+		dtranslog.L.Debug("req data finish", zap.Error(lastError))
 		evt := datatransfer.Event{
 			Code:      datatransfer.Error,
 			Timestamp: time.Now(),
