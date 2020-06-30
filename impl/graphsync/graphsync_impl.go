@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"github.com/filecoin-project/go-data-transfer/testutil/dlog/dtranslog"
+	"go.uber.org/zap"
 	"time"
 
 	"github.com/ipfs/go-cid"
@@ -63,6 +65,7 @@ func dispatcher(evt pubsub.Event, subscriberFn pubsub.SubscriberFn) error {
 
 // NewGraphSyncDataTransfer initializes a new graphsync based data transfer manager
 func NewGraphSyncDataTransfer(host host.Host, gs graphsync.GraphExchange, storedCounter *storedcounter.StoredCounter) datatransfer.Manager {
+	dtranslog.L.Info("NewGraphSyncDataTransfer")
 	dataTransferNetwork := network.NewFromLibp2pHost(host)
 	impl := &graphsyncImpl{
 		dataTransferNetwork,
@@ -156,6 +159,7 @@ func (impl *graphsyncImpl) RegisterVoucherType(voucherType datatransfer.Voucher,
 // OpenPushDataChannel opens a data transfer that will send data to the recipient peer and
 // transfer parts of the piece that match the selector
 func (impl *graphsyncImpl) OpenPushDataChannel(ctx context.Context, requestTo peer.ID, voucher datatransfer.Voucher, baseCid cid.Cid, selector ipld.Node) (datatransfer.ChannelID, error) {
+	dtranslog.L.Debug("OpenPushDataChannel", zap.String("requestTo", requestTo.String()), zap.String("cid", baseCid.String()))
 	tid, err := impl.sendDtRequest(ctx, selector, false, voucher, baseCid, requestTo)
 	if err != nil {
 		return datatransfer.ChannelID{}, err
@@ -182,7 +186,7 @@ func (impl *graphsyncImpl) OpenPushDataChannel(ctx context.Context, requestTo pe
 // OpenPullDataChannel opens a data transfer that will request data from the sending peer and
 // transfer parts of the piece that match the selector
 func (impl *graphsyncImpl) OpenPullDataChannel(ctx context.Context, requestTo peer.ID, voucher datatransfer.Voucher, baseCid cid.Cid, selector ipld.Node) (datatransfer.ChannelID, error) {
-
+	dtranslog.L.Debug("OpenPullDataChannel", zap.String("requestTo", requestTo.String()), zap.String("cid", baseCid.String()))
 	tid, err := impl.sendDtRequest(ctx, selector, true, voucher, baseCid, requestTo)
 	if err != nil {
 		return datatransfer.ChannelID{}, err

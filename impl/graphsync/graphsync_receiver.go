@@ -2,6 +2,8 @@ package graphsyncimpl
 
 import (
 	"context"
+	"github.com/filecoin-project/go-data-transfer/testutil/dlog/dtranslog"
+	"go.uber.org/zap"
 	"time"
 
 	"github.com/ipfs/go-cid"
@@ -24,7 +26,7 @@ func (receiver *graphsyncReceiver) ReceiveRequest(
 	ctx context.Context,
 	initiator peer.ID,
 	incoming message.DataTransferRequest) {
-
+	dtranslog.L.Debug("ReceiveRequest", zap.String("incoming", incoming.BaseCid().String()))
 	voucher, err := receiver.validateVoucher(initiator, incoming)
 	if err != nil {
 		receiver.impl.sendResponse(ctx, false, initiator, incoming.TransferID())
@@ -108,6 +110,7 @@ func (receiver *graphsyncReceiver) ReceiveResponse(
 	ctx context.Context,
 	sender peer.ID,
 	incoming message.DataTransferResponse) {
+	dtranslog.L.Debug("ReceiveRequest", zap.Bool("accepted", incoming.Accepted()))
 	evt := datatransfer.Event{
 		Code:      datatransfer.Error,
 		Message:   "",
