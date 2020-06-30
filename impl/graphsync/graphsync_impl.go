@@ -257,7 +257,7 @@ func (impl *graphsyncImpl) InProgressChannels() map[datatransfer.ChannelID]datat
 // sendGsRequest assembles a graphsync request and determines if the transfer was completed/successful.
 // notifies subscribers of final request status.
 func (impl *graphsyncImpl) sendGsRequest(ctx context.Context, initiator peer.ID, transferID datatransfer.TransferID, isPull bool, dataSender peer.ID, root cidlink.Link, stor ipld.Node) {
-	dtranslog.L.Debug("sendGsRequest", zap.Bool("isPull", isPull), )
+	dtranslog.L.Debug("sendGsRequest", zap.Bool("isPull", isPull), zap.String("root(datacid)", root.String()))
 	extDtData := newTransferData(transferID, initiator, isPull)
 	var buf bytes.Buffer
 	if err := extDtData.MarshalCBOR(&buf); err != nil {
