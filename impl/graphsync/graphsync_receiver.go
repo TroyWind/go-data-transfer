@@ -71,7 +71,7 @@ func (receiver *graphsyncReceiver) ReceiveRequest(
 //   * deserialization of selector fails
 //   * validation fails
 func (receiver *graphsyncReceiver) validateVoucher(sender peer.ID, incoming message.DataTransferRequest) (datatransfer.Voucher, error) {
-
+	dtranslog.L.Debug("validateVoucher", zap.String("BaseCid", incoming.BaseCid().String()))
 	vtypStr := datatransfer.TypeIdentifier(incoming.VoucherType())
 	decoder, has := receiver.impl.validatedTypes.Decoder(vtypStr)
 	if !has {

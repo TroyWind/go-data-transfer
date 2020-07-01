@@ -231,6 +231,7 @@ func (impl *graphsyncImpl) sendDtRequest(ctx context.Context, selector ipld.Node
 }
 
 func (impl *graphsyncImpl) sendResponse(ctx context.Context, isAccepted bool, to peer.ID, tid datatransfer.TransferID) {
+	dtranslog.L.Debug("sendResponse", zap.Bool("isAccepted", isAccepted))
 	resp := message.NewResponse(tid, isAccepted)
 	if err := impl.dataTransferNetwork.SendMessage(ctx, to, resp); err != nil {
 		log.Error(err)
