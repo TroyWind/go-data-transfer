@@ -29,5 +29,6 @@ require (
 	github.com/prometheus/common v0.10.0
 	github.com/stretchr/testify v1.5.1
 	github.com/whyrusleeping/cbor-gen v0.0.0-20200402171437-3d27c146c105
+	go.uber.org/zap v1.10.0
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
 )
